@@ -7,7 +7,7 @@ class blogArticleSpider(CrawlSpider):
     name = "blogArticle"
     allowed_domains = ["swedish.org"]
     start_urls = [
-        "http://www.swedish.org/blog/"
+        "http://www.swedish.org/blog/2015"
     ]
     rules = [
         Rule(LinkExtractor(
@@ -19,7 +19,7 @@ class blogArticleSpider(CrawlSpider):
             ),
              follow=True),
         Rule(LinkExtractor(
-                allow=(r'/blog/\d{4}/\d{2}/.+')
+                allow=(r'/blog/\d{4}/\d{2}/[^\/]+')
             ),
              callback='parse_article',
              follow=False)
