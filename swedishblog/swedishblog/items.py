@@ -14,3 +14,4 @@ class SwedishblogArticle(scrapy.Item):
     publishDate = scrapy.Field()
     author = scrapy.Field()
     contents = scrapy.Field()
+    topics = scrapy.Field()

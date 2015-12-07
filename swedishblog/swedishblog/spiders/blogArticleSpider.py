@@ -7,10 +7,21 @@ class blogArticleSpider(CrawlSpider):
     name = "blogArticle"
     allowed_domains = ["swedish.org"]
     start_urls = [
-         "http://www.swedish.org/blog"
-        #"http://www.swedish.org/blog/2015"
+         "http://www.swedish.org/blog/2009",
+         "http://www.swedish.org/blog/2010",
+         "http://www.swedish.org/blog/2011",
+         "http://www.swedish.org/blog/2012",
+         "http://www.swedish.org/blog/2013",
+         "http://www.swedish.org/blog/2014",
+         "http://www.swedish.org/blog/2015"
+
     ]
     rules = [
+        Rule(LinkExtractor(
+                allow=(r'/blog/\d{4}/\d{2}/[^/]+')
+            ),
+             callback='parse_article',
+             follow=False),    
         Rule(LinkExtractor(
                 allow=(r'/blog/\d{4}\?page=\d+$')
             ),
@@ -18,12 +29,7 @@ class blogArticleSpider(CrawlSpider):
         Rule(LinkExtractor(
                 allow=(r'/blog/\d{4}/')
             ),
-             follow=True),
-        Rule(LinkExtractor(
-                allow=(r'/blog/\d{4}/\d{2}/[^/]+')
-            ),
-             callback='parse_article',
-             follow=False)
+             follow=True)
     ]
     def parse_article(self, response):
         title = response.xpath('//h1/text()').extract()[0].strip()
@@ -40,6 +46,9 @@ class blogArticleSpider(CrawlSpider):
             author = author2
         else:
             author = author1
+        # topic
+        topics = response.xpath("//div[@id='main_0_contentpanel_0_pnlTopics']/a/text()").extract()
+
         # extract the contents. We basically collect the HTML below the div(id=main_0_contentpanel_0_UpdatePanel1) tag
         sibling_index = 1
         contents = []
@@ -56,5 +65,6 @@ class blogArticleSpider(CrawlSpider):
         article['author'] = author
         article['url'] = response.url
         article['contents'] = contents
+        article['topics'] = topics
 
         return article
